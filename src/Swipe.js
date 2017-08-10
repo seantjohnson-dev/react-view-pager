@@ -21,6 +21,7 @@ class Swipe {
   }
 
   _onSwipeStart = (e) => {
+    e.preventDefault();
     const { pageX, pageY } = getTouchEvent(e)
 
     // we're now swiping
@@ -45,10 +46,11 @@ class Swipe {
       this._isFlick = false
     }, this.pager.options.flickTimeout)
 
-    this.pager.emit('swipeStart')
+    this.pager.emit('swipeStart', e)
   }
 
   _onSwipeMove = (e) =>  {
+    e.preventDefault();
     // bail if we aren't swiping
     if (!this.pager.isSwiping) return
 
@@ -67,7 +69,6 @@ class Swipe {
     }
 
     if (this._isSwipe(swipeThreshold)) {
-      e.preventDefault()
       e.stopPropagation()
 
       const swipeDiff = this._swipeDiff[axis]
@@ -75,11 +76,11 @@ class Swipe {
 
       this.pager.setPositionValue(trackPosition)
 
-      this.pager.emit('swipeMove')
+      this.pager.emit('swipeMove', e)
     }
   }
 
-  _onSwipeEnd = () =>  {
+  _onSwipeEnd = (e) =>  {
     const { swipeThreshold, viewsToMove, axis, infinite } = this.pager.options
     const threshold = this._isFlick
       ? swipeThreshold
@@ -107,7 +108,7 @@ class Swipe {
       }
     }
 
-    this.pager.emit('swipeEnd')
+    this.pager.emit('swipeEnd', e)
   }
 
   _onSwipePast = () =>  {
